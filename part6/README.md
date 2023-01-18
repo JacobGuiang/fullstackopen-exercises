@@ -1,0 +1,1 @@
+Submission for part 6 exercises of https://fullstackopen.com/en/  
