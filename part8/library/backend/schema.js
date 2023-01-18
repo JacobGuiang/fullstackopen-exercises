@@ -40,7 +40,7 @@ const typeDefs = gql`
       published: Int!
       author: String!
       genres: [String!]!
-    ): Book!
+    ): Book
     editAuthor(name: String!, setBornTo: Int!): Author
     createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token

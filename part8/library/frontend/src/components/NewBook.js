@@ -9,15 +9,41 @@ function NewBook({ show }) {
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState([]);
 
-  const [addBook, result] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
-  });
+  const [addBook] = useMutation(ADD_BOOK);
 
   const submit = async (event) => {
     event.preventDefault();
 
     addBook({
-      variables: { title, published: Number(published), author, genres },
+      variables: {
+        title,
+        author,
+        genres,
+        published: Number(published),
+      },
+      refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+      update: (store, response) => {
+        genres.forEach((g) => {
+          try {
+            const dataInStore = store.readQuery({
+              query: ALL_BOOKS,
+              variables: { g },
+            });
+
+            store.writeQuery({
+              query: ALL_BOOKS,
+              variables: { g },
+              data: {
+                allBooks: [...dataInStore.allBooks].concat(
+                  response.data.addBook
+                ),
+              },
+            });
+          } catch (e) {
+            console.log('not queried', g);
+          }
+        });
+      },
     });
 
     setTitle('');
@@ -33,7 +59,6 @@ function NewBook({ show }) {
   };
 
   if (!show) return null;
-  if (result.loading) return <div>loading</div>;
   return (
     <div>
       <form onSubmit={submit}>

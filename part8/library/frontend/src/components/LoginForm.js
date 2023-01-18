@@ -6,16 +6,16 @@ function LoginForm({ show, setToken, setPage }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const [login, result] = useMutation(LOGIN);
+  const [login, loginRequest] = useMutation(LOGIN);
 
   useEffect(() => {
-    if (result.data) {
-      const token = result.data.login.value;
+    if (loginRequest.data) {
+      const token = loginRequest.data.login.value;
       setToken(token);
-      localStorage.setItem('loggedUser', token);
+      localStorage.setItem('loggedUserToken', token);
       setPage('authors');
     }
-  }, [result.data]);
+  }, [loginRequest.data, setToken, setPage]);
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -25,7 +25,6 @@ function LoginForm({ show, setToken, setPage }) {
   };
 
   if (!show) return null;
-  if (result.loading) return <div>loading</div>;
   return (
     <div>
       <form onSubmit={handleLogin}>

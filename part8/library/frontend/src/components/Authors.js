@@ -1,57 +1,47 @@
-import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
+import Select from 'react-select';
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries';
 
-function Authors({ show, token }) {
-  const [name, setName] = useState('');
-  const [born, setBorn] = useState('');
+function SetBirthYear({ authors }) {
+  const [editAuthor] = useMutation(EDIT_AUTHOR);
 
-  const result = useQuery(ALL_AUTHORS);
-  const authors = result.data ? result.data.allAuthors : [];
+  if (authors.length === 0) {
+    return null;
+  }
 
-  const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
-  });
+  const options = authors.map((author) => ({
+    value: author.name,
+    label: author.name,
+  }));
 
-  const submit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    editAuthor({ variables: { name, setBornTo: Number(born) } });
-
-    setName('');
-    setBorn('');
+    editAuthor({
+      variables: {
+        name: event.target.author.value,
+        setBornTo: Number(event.target.year.value),
+      },
+    });
   };
 
-  const setBirthyear = () => (
+  return (
     <div>
-      <h2>Set birthyear</h2>
-      <form onSubmit={submit}>
-        <div>
-          <select value={name} onChange={({ target }) => setName(target.value)}>
-            <option value="" disabled>
-              author
-            </option>
-            {authors.map((author) => (
-              <option key={author.name} value={author.name}>
-                {author.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          born
-          <input
-            value={born}
-            onChange={({ target }) => setBorn(target.value)}
-          />
-        </div>
+      <h3>Set birthyear</h3>
+      <form onSubmit={handleSubmit}>
+        <Select options={options} name="author" />
+        <input name="year" />
         <button type="submit">update author</button>
       </form>
     </div>
   );
+}
 
-  if (!show) return null;
-  if (result.loading) return <div>loading</div>;
+function Authors({ show }) {
+  const result = useQuery(ALL_AUTHORS);
+  const authors = result.data ? result.data.allAuthors : [];
+
+  if (!show || !result.data) return null;
   return (
     <div>
       <h2>authors</h2>
@@ -71,7 +61,7 @@ function Authors({ show, token }) {
           ))}
         </tbody>
       </table>
-      {token && setBirthyear()}
+      <SetBirthYear authors={authors} />
     </div>
   );
 }

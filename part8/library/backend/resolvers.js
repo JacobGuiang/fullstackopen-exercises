@@ -9,31 +9,54 @@ const pubsub = new PubSub();
 
 const JWT_SECRET = 'sekret';
 
+let books;
+
 const resolvers = {
   Query: {
     bookCount: async () => Book.countDocuments(),
     authorCount: async () => Author.countDocuments(),
     allBooks: async (root, args) => {
-      if (args.genre) return Book.find({ genres: { $in: [args.genre] } });
-      return Book.find({});
+      const query = {};
+
+      if (args.author) {
+        const theAuthor = await Author.findOne({ name: args.author });
+        query.author = theAuthor.id;
+      }
+
+      if (args.genre) {
+        query.genres = { $in: [args.genre] };
+      }
+
+      return Book.find(query).populate('author');
     },
-    allAuthors: async () => Author.find({}),
+    allAuthors: async () => {
+      books = await Book.find({});
+      return Author.find({});
+    },
     me: (root, args, context) => context.currentUser,
+  },
+  Author: {
+    bookCount: async (root) =>
+      books.filter((book) => String(book.author) === String(root.id)).length,
   },
   Mutation: {
     addBook: async (root, args, context) => {
       if (!context.currentUser)
         throw new AuthenticationError('not authenticated');
 
+      let newAuthor = false;
       let author = await Author.findOne({ name: args.author });
-      if (!author) author = new Author({ name: args.author });
+      if (!author) {
+        newAuthor = true;
+        author = new Author({ name: args.author });
+      }
 
-      const book = new Book({ ...args, author });
-
-      author.bookCount = author.bookCount ? author.bookCount + 1 : 1;
+      let book = new Book({ ...args, author });
 
       try {
-        await author.save();
+        if (newAuthor) {
+          await author.save();
+        }
         await book.save();
       } catch (error) {
         throw new UserInputError(error.message, {
@@ -41,6 +64,7 @@ const resolvers = {
         });
       }
 
+      book = await Book.findById(book.id).populate('author');
       pubsub.publish('BOOK_ADDED', { bookAdded: book });
 
       return book;
@@ -91,9 +115,6 @@ const resolvers = {
     bookAdded: {
       subscribe: () => pubsub.asyncIterator('BOOK_ADDED'),
     },
-  },
-  Book: {
-    author: async (root) => Author.findOne({ _id: root.author }),
   },
 };
 

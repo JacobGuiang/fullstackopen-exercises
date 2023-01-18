@@ -1,63 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApolloClient, useSubscription } from '@apollo/client';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import Recommend from './components/Recommend';
 import LoginForm from './components/LoginForm';
-import { BOOK_ADDED } from './queries';
+import { BOOK_ADDED, ALL_BOOKS } from './queries';
 
 function App() {
   const [page, setPage] = useState('authors');
   const [token, setToken] = useState(null);
-  const [notification, setNotification] = useState(null);
   const client = useApolloClient();
 
-  const notify = (message) => {
-    setNotification(message);
-    setTimeout(() => {
-      setNotification(null);
-    }, 5000);
-  };
+  useEffect(() => {
+    const loggedUserToken = localStorage.getItem('loggedUserToken');
+    if (loggedUserToken) {
+      setToken(loggedUserToken);
+    }
+  }, []);
 
-  useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
-      const { bookAdded } = data.data;
-      notify(`added ${bookAdded.title} by ${bookAdded.author.name}`);
-    },
-  });
-
-  const logout = async (event) => {
-    event.preventDefault();
+  const logout = async () => {
     setToken(null);
     localStorage.clear();
     client.resetStore();
-    setPage('login');
   };
 
-  const addBookButton = () => (
-    <button type="button" onClick={() => setPage('add')}>
-      add book
-    </button>
-  );
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (set, object) =>
+      set.map((elem) => elem.id).includes(object.id);
 
-  const recommendButton = () => (
-    <button type="button" onClick={() => setPage('recommend')}>
-      recommend
-    </button>
-  );
+    const dataInStore = client.readQuery({ query: ALL_BOOKS });
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: ALL_BOOKS,
+        data: { allBooks: dataInStore.allBooks.concat(addedBook) },
+      });
+    }
+  };
 
-  const loginButton = () => (
-    <button type="button" onClick={() => setPage('login')}>
-      login
-    </button>
-  );
-
-  const logoutButton = () => (
-    <button type="button" onClick={logout}>
-      logout
-    </button>
-  );
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const book = subscriptionData.data.bookAdded;
+      alert(`new book ${book.title} by ${book.author.name}`);
+      updateCacheWith(book);
+    },
+  });
 
   return (
     <div>
@@ -68,21 +55,32 @@ function App() {
         <button type="button" onClick={() => setPage('books')}>
           books
         </button>
-        {!token && loginButton()}
-        {token && addBookButton()}
-        {token && recommendButton()}
-        {token && logoutButton()}
+        {token ? (
+          <>
+            <button type="button" onClick={() => setPage('recommended')}>
+              recommended
+            </button>
+            <button type="button" onClick={() => setPage('add')}>
+              add book
+            </button>
+            <button type="button" onClick={logout}>
+              logout
+            </button>
+          </>
+        ) : (
+          <button type="button" onClick={() => setPage('login')}>
+            login
+          </button>
+        )}
       </div>
 
-      {notification && <div>{notification}</div>}
-
-      <Authors show={page === 'authors'} token={token} />
+      <Authors show={page === 'authors'} />
 
       <Books show={page === 'books'} />
 
       <NewBook show={page === 'add'} />
 
-      <Recommend show={page === 'recommend'} />
+      <Recommend show={page === 'recommended'} />
 
       <LoginForm
         show={page === 'login'}
