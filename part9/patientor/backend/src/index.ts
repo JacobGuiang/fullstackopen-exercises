@@ -11,6 +11,10 @@ app.use(cors());
 app.use('/api/diagnoses', diagnoseRouter);
 app.use('/api/patients', patientRouter);
 
+app.get('/api/ping', (_req, res) => {
+  res.send('pong');
+});
+
 const PORT = 3001;
 
 app.listen(PORT, () => {
