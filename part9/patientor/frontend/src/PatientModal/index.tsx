@@ -1,72 +1,64 @@
 import { useStateValue } from '../state';
-import {
-  Patient,
-  Entry,
-  HospitalEntry,
-  OccupationalHealthcareEntry,
-  HealthCheckEntry,
-} from '../types';
+import { Patient, Entry } from '../types';
 
-const HospitalEntryDetails = ({ entry }: { entry: HospitalEntry }) => {
-  const discharge = entry.discharge;
-  return (
-    <div>
-      {discharge.date} {discharge.criteria}
-    </div>
+const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
   );
 };
 
-const OccupationalHealthcareEntryDetails = ({
-  entry,
-}: {
-  entry: OccupationalHealthcareEntry;
-}) => {
-  const { sickLeave } = entry;
+const EntryDetails = ({ entry }: { entry: Entry }) => {
+  const [{ diagnoses }] = useStateValue();
+  let details;
+
+  switch (entry.type) {
+    case 'Hospital':
+      details = entry.discharge && (
+        <div>
+          discharged {entry.discharge.date}: {entry.discharge.criteria}
+        </div>
+      );
+      break;
+    case 'HealthCheck':
+      details = <div> health check rating: {entry.healthCheckRating}</div>;
+      break;
+    case 'OccupationalHealthcare':
+      details = (
+        <div>
+          <div>employer: {entry.employerName}</div>
+          {entry.sickLeave && (
+            <div>
+              sickleave from {entry.sickLeave.startDate} to{' '}
+              {entry.sickLeave.endDate}
+            </div>
+          )}
+        </div>
+      );
+      break;
+    default:
+      return assertNever(entry);
+  }
+
   return (
     <>
-      <div>employer: {entry.employerName}</div>
-      {sickLeave && <div>start date: {sickLeave.startDate}</div>}
-      {sickLeave && <div>end date: {sickLeave.endDate}</div>}
+      {entry.date} <i>{entry.description}</i>
+      {details}
+      {entry.diagnosisCodes && (
+        <ul>
+          {entry.diagnosisCodes?.map((code) => (
+            <li key={code}>
+              {code} {diagnoses[code].name}
+            </li>
+          ))}
+        </ul>
+      )}
+      <div>diagnose by {entry.specialist}</div>
     </>
   );
 };
 
-const HealthCheckEntryDetails = ({ entry }: { entry: HealthCheckEntry }) => {
-  return <div>health check rating: {entry.healthCheckRating}</div>;
-};
-
-const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
-  const assertNever = (value: never): never => {
-    throw new Error(
-      `Unhandled discriminated union member: ${JSON.stringify(value)}`
-    );
-  };
-
-  switch (entry.type) {
-    case 'Hospital':
-      return <HospitalEntryDetails entry={entry} />;
-    case 'OccupationalHealthcare':
-      return <OccupationalHealthcareEntryDetails entry={entry} />;
-    case 'HealthCheck':
-      return <HealthCheckEntryDetails entry={entry} />;
-    default:
-      return assertNever(entry);
-  }
-};
-
 const PatientModal = ({ patient }: { patient: Patient }) => {
-  const [{ diagnoses }] = useStateValue();
   const { entries } = patient;
-
-  const DiagnosisCodes = ({ entry }: { entry: Entry }) => {
-    <ul>
-      {entry.diagnosisCodes?.map((code) => (
-        <li key={code}>
-          {code} {diagnoses.find((diagnosis) => diagnosis.code === code)?.name}
-        </li>
-      ))}
-    </ul>;
-  };
 
   return (
     <div>
@@ -76,12 +68,7 @@ const PatientModal = ({ patient }: { patient: Patient }) => {
       <h2>entries</h2>
       {entries.map((entry) => (
         <div key={entry.id}>
-          <div>
-            {entry.date} {entry.description}
-          </div>
-          {entry.diagnosisCodes && DiagnosisCodes}
           <EntryDetails entry={entry} />
-          <div>diagnose by {entry.specialist}</div>
           <br />
         </div>
       ))}

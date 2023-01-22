@@ -3,7 +3,6 @@ import {
   Patient,
   PublicPatient,
   PatientWithoutId,
-  Entry,
   EntryWithoutId,
 } from '../types';
 import { v1 as uuid } from 'uuid';
@@ -35,11 +34,14 @@ const addPatient = (patient: PatientWithoutId): Patient => {
   return newPatient;
 };
 
-const addEntry = (entry: EntryWithoutId, patientId: string): Entry => {
+const addEntry = (
+  entry: EntryWithoutId,
+  patientId: string
+): Patient | undefined => {
   const patientToUpdate = patients.find((patient) => patient.id === patientId);
 
   if (!patientToUpdate) {
-    throw new Error(`patient id not found: ${patientId}`);
+    return undefined;
   }
 
   const newEntry = {
@@ -49,7 +51,7 @@ const addEntry = (entry: EntryWithoutId, patientId: string): Entry => {
   const { entries } = patientToUpdate;
   entries.push(newEntry);
 
-  return newEntry;
+  return patientToUpdate;
 };
 
 export default {
