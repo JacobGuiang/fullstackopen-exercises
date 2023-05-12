@@ -1,0 +1,10 @@
+Script started on 2023-05-12 14:24:32-05:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="120" LINES="30"]
+[?2004h]0;jacob@DESKTOP-MAEPDNC: ~/fullstackopen-exercises/part12/script-answers[01;32mjacob@DESKTOP-MAEPDNC[00m:[01;34m~/fullstackopen-exercises/part12/script-answers[00m$ docker run 0-[K[K-it ubuntu bash
+[?2004l[?2004h]0;root@12c8083f4e6f: /root@12c8083f4e6f:/# mkdir /sr  user/   r/src/app
+[?2004l[?2004h]0;root@12c8083f4e6f: /root@12c8083f4e6f:/# touch /usr/src/app/index.js
+[?2004l[?2004h]0;root@12c8083f4e6f: /root@12c8083f4e6f:/# [Kexit
+[?2004lexit
+[?2004h]0;jacob@DESKTOP-MAEPDNC: ~/fullstackopen-exercises/part12/script-answers[01;32mjacob@DESKTOP-MAEPDNC[00m:[01;34m~/fullstackopen-exercises/part12/script-answers[00m$ [?2004l
+exit
+
+Script done on 2023-05-12 14:24:58-05:00 [COMMAND_EXIT_CODE="0"]
