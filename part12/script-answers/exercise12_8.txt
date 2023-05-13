@@ -1,0 +1,95 @@
+Script started on 2023-05-12 19:58:53-05:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="203" LINES="62"]
+]0;jacob@jacob-XPS-13-9300: ~/repos/fullstackopen-exercises/part12/script-answers[01;32mjacob@jacob-XPS-13-9300[00m:[01;34m~/repos/fullstackopen-exercises/part12/script-answers[00m$ docker ps [K
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+71f0817acee0   mongo     "docker-entrypoint.s…"   37 minutes ago   Up 37 minutes   0.0.0.0:3456->27017/tcp, :::3456->27017/tcp   todo-backend-mongo-1
+]0;jacob@jacob-XPS-13-9300: ~/repos/fullstackopen-exercises/part12/script-answers[01;32mjacob@jacob-XPS-13-9300[00m:[01;34m~/repos/fullstackopen-exercises/part12/script-answers[00m$ docker exec 0[K-it todo-backend-mongo-1 bash
+[?2004hroot@71f0817acee0:/# mongosh -u root -o p example
+[?2004l]0;mongosh mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000Current Mongosh Log ID:	645ee11a4e19b6366223d6e0
+Connecting to:		[1m[32mmongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.2[0m
+Using MongoDB:		6.0.5
+[1m[33mUsing Mongosh[0m:		1.8.2
+
+For mongosh info see: [1mhttps://docs.mongodb.com/mongodb-shell/[0m
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the [1mdisableTelemetry()[0m command.
+
+[1G[0J [1G[1m[33m------[0m
+   [1m[33mThe server generated these startup warnings when booting[0m
+   2023-05-13T00:22:09.382+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2023-05-13T00:22:11.084+00:00: vm.max_map_count is too low
+[1m[33m------[0m
+
+[1m[33m------[0m
+   Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+   metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+   
+   The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+   and anyone you share the URL with. MongoDB may use this information to make product
+   improvements and to suggest MongoDB products and deployment options to you.
+   
+   To enable free monitoring, run the following command: db.enableFreeMonitoring()
+   To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+[1m[33m------[0m
+
+[1G[0Jtest> [7Gshow dbs
+[1madmin[0m         100.00 KiB
+[1mconfig[0m        108.00 KiB
+[1mlocal[0m          72.00 KiB
+[1mthe_database[0m   56.00 KiB
+[1G[0Jtest> [7Guse the_database
+switched to db the_database
+[1G[0Jthe_database> [15Gshow cole[1G[0Jthe_database> show col[23Glections
+[1mtodos[0m
+[1G[0Jthe_database> [15Gdb.todos.find(P{)[1G[0Jthe_database> db.todos.find(P{[31G[1G[0Jthe_database> db.todos.find(P[30G[1G[0Jthe_database> db.todos.find([29G{})
+[
+  {
+    _id: ObjectId("645ed83091e510701048742d"),
+    text: [32m'new text'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId("645ed83091e510701048742e"),
+    text: [32m'new text'[39m,
+    done: [33mtrue[39m
+  }
+]
+[1G[0Jthe_database> [15Gdb.collection.insertOne(P[1G[0Jthe_database> db.collection.insertOne([39G{[32m'[39m[1G[0Jthe_database> db.collection.insertOne({[40Gext[1G[0Jthe_database> db.collection.insertOne({ex[42G[1G[0Jthe_database> db.collection.insertOne({e[41G[1G[0Jthe_database> db.collection.insertOne({[40Gtext[33mtext[39m:[32m"[39m[32mI[39m[32mn[39m[32mc[39m[32mr[39m[32me[39m[32ma[39m[32ms[39m[32me[39m [32mt[39m[32mh[39m[32me[39m [32mn[39m[32mu[39m[32mm[39m[32mb[39m[32me[39m[32mr[39m [32mo[39m[32mf[39m [32mt[39m[32mo[39m[32mo[39m[32ml[39m[32ms[39m [32mi[39m[32mn[39m [32mm[39m[32my[39m [32mt[39m[32mo[39m[32mo[39m[32ml[39m[32mb[39m[32me[39m[32ml[39m[32mt[39m[32m"[39m, status[33mstatus[39m: fals[33mfalse[39m})
+{
+  acknowledged: [33mtrue[39m,
+  insertedId: ObjectId("645ee1cd4e19b6366223d6e1")
+}
+[1G[0Jthe_database> [15G[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[107G[1G[0Jthe_database> db.todos.find({})[32G
+[
+  {
+    _id: ObjectId("645ed83091e510701048742d"),
+    text: [32m'new text'[39m,
+    done: [33mfalse[39m
+  },
+  {
+    _id: ObjectId("645ed83091e510701048742e"),
+    text: [32m'new text'[39m,
+    done: [33mtrue[39m
+  }
+]
+[1G[0Jthe_database> [15Gdb[1G[0Jthe_database> d[16G[1G[0Jthe_database> [15Gshow collections
+[1mcollection[0m
+[1mtodos[0m
+[1G[0Jthe_database> [15Gdb.collc[1G[0Jthe_database> db.coll[22Gection.drop()
+[33mtrue[39m
+[1G[0Jthe_database> [15G[1G[0Jthe_database> db.collection.drop()[35G[1G[0Jthe_database> show collections[31G
+[1mtodos[0m
+[1G[0Jthe_database> [15Gt[1G[0Jthe_database> [15Gdb.todos.insert[1G[0Jthe_database> db.todos.insert[30G[1G[0Jthe_database> db.todos.insert[30G[1G[0Jthe_database> db.todos.insert[30G[1D[1G[0Jthe_database> t[15G[1C[1G[0Jthe_database> [15G[1G[0Jthe_database> show collections[31G[1G[0Jthe_database> [15G[1G[0Jthe_database> show collections[31G[1G[0Jthe_database> db.collection.drop()[35G[1G[0Jthe_database> show collections[31G[1G[0Jthe_database> db.todos.find({})[32G[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[107G[1G[0Jthe_database> db.todos.find({})[32G[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[107G[1D[1G[0Jthe_database> db.collection.insertOne[44m([49m{[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[106G[1D[1G[0Jthe_database> db.collection.insertOne([44m{[49m[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[105G[5D[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[100G[2D[6D[3D[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[44m[32m"[49mIncrease the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[89G[8D[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[81G[3D[3D[6D[3D[7D[4D[9D[2D[4D[2D[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m}[44m)[49m[38G[9D[1G[0Jthe_database> db.collection.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[29G[1D[1G[0Jthe_database> db.collectio.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[27G[1G[0Jthe_database> db.collecti.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[26G[1G[0Jthe_database> db.collect.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[25G[1G[0Jthe_database> db.collec.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[24G[1G[0Jthe_database> db.colle.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[23G[1G[0Jthe_database> db.coll.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[22G[1G[0Jthe_database> db.col.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[21G[1G[0Jthe_database> db.co.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[20G[1G[0Jthe_database> db.c.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[19G[1G[0Jthe_database> db..insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[18G[1G[0Jthe_database> db.t.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[19G[1G[0Jthe_database> db.to.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[20G[1G[0Jthe_database> db.tod.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[21G[1G[0Jthe_database> db.todo.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[22G[1G[0Jthe_database> db.todos.insertOne({[33mtext[39m:[32m"Increase the number of tools in my toolbelt"[39m, [33mstatus[39m: [33mfalse[39m})[23G[79C
+{
+  acknowledged: [33mtrue[39m,
+  insertedId: ObjectId("645ee2314e19b6366223d6e2")
+}
+[1G[0Jthe_database> [15G
+(To exit, press Ctrl+C again or Ctrl+D or type .exit)
+[1G[0Jthe_database> [15G
+[?2004hroot@71f0817acee0:/# exit
+[?2004lexit
+]0;jacob@jacob-XPS-13-9300: ~/repos/fullstackopen-exercises/part12/script-answers[01;32mjacob@jacob-XPS-13-9300[00m:[01;34m~/repos/fullstackopen-exercises/part12/script-answers[00m$ sc[K[Kexit
+
+Script done on 2023-05-12 20:05:07-05:00 [COMMAND_EXIT_CODE="0"]
